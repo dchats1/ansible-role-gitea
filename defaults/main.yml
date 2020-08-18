@@ -1,2 +1,7 @@
 ---
-# defaults file for gitea
+gitea_pod_network: default
+gitea_pod_ip: 
+gitea_pod_hostname: gitea.example.com
+gitea_version: 1.12.3
+postgres_version: 9.6
+nginx_version: 1.19.1

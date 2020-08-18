@@ -1,2 +1,10 @@
 ---
-# tasks file for gitea
+- name: Create gitea pod
+  containers.podman.podman_pod:
+    name: gitea
+    state: started
+    network: '{{ gitea_pod_network }}'
+    ip: '{{ gitea_pod_ip }}'
+    hostname: '{{ gitea_pod_hostname }}'
+
+- include_tasks: postgres.yml
