@@ -1,7 +1,7 @@
 Gitea
 =========
 
-This role deploys gitea with an nginx reverse proxy (80 -> 3000) and a postgres backend
+This role deploys gitea in a Podman pod with an nginx reverse proxy (80 -> 3000) and a postgres backend
 https://gitea.io/en-us/
 
 Requirements
@@ -12,21 +12,28 @@ This requires the containers.podman collection: https://galaxy.ansible.com/conta
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Variable              | Description
+----------------------|-----------------------------------------------------
+gitea_pod_network:    | Podman network to apply to pod. (Default: 'podman')                                                         
+gitea_pod_ip:         | Set a static IP for the pod's shared network.
+gitea_pod_hostname:   | Hostname for pod. (Default: 'gitea.example.com)
+gitea_version:        | Gitea version. (Default: '1.12.3')
+postgres_version:     | Postgres version. (Default: '9.6')
+nginx_version:        | Nginx version. (Default: 1.19.1)
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+No dependencies at this time.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
+```
+    - hosts: podman-host
       roles:
-         - { role: username.rolename, x: 42 }
+         - gitea
+```
 
 License
 -------
