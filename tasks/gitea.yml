@@ -1,0 +1,46 @@
+---
+- name: Create Gitea Container
+  containers.podman.podman_container:
+    name: gitea-web
+    image: 'gitea/gitea:{{ gitea_version }}'
+    pod: gitea
+    conmon_pidfile: /var/lib/containers/pids/gitea-web.pid
+    env:
+      USER_UID: 1000
+      USER_GID: 1000
+      DB_TYPE: postgres
+      DB_HOST: gitea-postgres:5432
+      DB_NAME: gitea
+      DB_USER: gitea
+      DB_PASSWD: gitea
+      DOMAIN: gitea.bos2.linuxlab.tech
+      SSH_DOMAIN: gitea.bos2.linuxlab.tech 
+      RUN_MODE: prod
+    volume:
+      - /var/lib/containers/gitea:/data:Z
+      - /etc/localtime:/etc/localtime:ro 
+    state: started
+
+- name: Generate systemd unit content
+  shell: podman generate systemd gitea-web -n --restart-policy on-failure | tail -n +5
+  changed_when: False
+  register: systemd
+
+- name: Create unit file
+  copy:
+    content: '{{systemd.stdout }}'
+    dest: /etc/systemd/system/container-gitea-web.service
+    owner: root
+    group: root
+    mode: '0644'
+  register: unit_file
+  notify:
+    - daemon-reload
+    - Restart gitea-web
+
+- name: Start Gitea Web container
+  systemd:
+    name: container-gitea-web.service
+    state: started
+    enabled: yes
+  when: unit_file.changed == false

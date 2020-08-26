@@ -13,3 +13,7 @@
     name: container-gitea-proxy.service
     state: restarted
 
+- name: Restart gitea-web
+  systemd:
+    name: container-gitea-web.service
+    state: restarted
