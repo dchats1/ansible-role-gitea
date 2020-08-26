@@ -1,0 +1,23 @@
+{% if gitea_nginx_ssl == false %}
+server {
+    listen 80;
+
+    location / {
+        proxy_pass http://localhost:3000;
+    }
+}
+{% endif %}
+{% if gitea_nginx_ssl == true %}
+server {
+  listen 80;
+  return 301 https://{{ gitea_pod_hostname }}$request_uri;
+}
+server {
+  listen 443 ssl;
+  ssl_certificate     {{ gitea_nginx_cert }};
+  ssl_certificate_key {{ gitea_nginx_key }};
+  location / {
+    proxy_pass http://localhost:3000;
+  }
+}
+{% endif %}

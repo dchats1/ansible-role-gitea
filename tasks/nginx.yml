@@ -1,0 +1,64 @@
+---
+- name: Create gitea nginx config directory
+  file:
+    path: '{{ gitea_nginx_config_dir }}'
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+
+- name: Create gitea nginx config file
+  template:
+    src: gitea-proxy.conf.j2
+    dest: '{{ gitea_nginx_config_dir }}/proxy_config.conf'
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Create Standard Gitea Proxy
+  containers.podman.podman_container:
+    name: gitea-proxy
+    image: 'docker.io/library/nginx:{{ gitea_nginx_version }}'
+    pod: gitea
+    conmon_pidfile: /var/lib/containers/pids/gitea-proxy.pid
+    volume:
+      - /var/lib/containers/gitea-proxy/proxy_config.conf:/etc/nginx/conf.d/default.conf:Z
+    state: started
+  when: gitea_nginx_ssl == false
+
+- name: Create SSL Gitea proxy
+  containers.podman.podman_container:
+    name: gitea-proxy
+    image: 'docker.io/library/nginx:{{ gitea_nginx_version }}'
+    pod: gitea
+    conmon_pidfile: /var/lib/containers/pids/gitea-proxy.pid
+    volume:
+      - /var/lib/containers/gitea-proxy/proxy_config.conf:/etc/nginx/conf.d/default.conf:Z
+      - '/etc/pki/tls/private/{{ gitea_nginx_key }}:/etc/nginx/{{ gitea_nginx_key }}:Z'
+      - '/etc/pki/tls/certs/{{ gitea_nginx_cert }}:/etc/nginx/{{ gitea_nginx_cert }}:Z'
+    state: started
+  when: gitea_nginx_ssl == true
+
+- name: Generate systemd unit content
+  shell: podman generate systemd gitea-proxy -n --restart-policy on-failure | tail -n +5
+  changed_when: False
+  register: systemd
+
+- name: Create unit file
+  copy:
+    content: '{{systemd.stdout }}'
+    dest: /etc/systemd/system/container-gitea-proxy.service
+    owner: root
+    group: root
+    mode: '0644'
+  register: unit_file
+  notify:
+    - daemon-reload
+    - Restart gitea-proxy
+
+- name: Start Gitea Proxy container
+  systemd:
+    name: container-gitea-proxy.service
+    state: started
+    enabled: yes
+  when: unit_file.changed == false

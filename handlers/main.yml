@@ -8,3 +8,8 @@
     name: container-gitea-postgres.service
     state: restarted
 
+- name: Restart gitea-proxy
+  systemd:
+    name: container-gitea-proxy.service
+    state: restarted
+
