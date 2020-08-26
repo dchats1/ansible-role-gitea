@@ -17,7 +17,7 @@
       SSH_DOMAIN: gitea.bos2.linuxlab.tech 
       RUN_MODE: prod
     volume:
-      - /var/lib/containers/gitea:/data:Z
+      - '{{ gitea_data_dir }}:/data:Z'
       - /etc/localtime:/etc/localtime:ro 
     state: started
 
