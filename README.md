@@ -1,7 +1,7 @@
 Gitea
 =========
 
-This role deploys gitea in a Podman pod with an nginx reverse proxy (80 -> 3000) and a postgres backend
+This role deploys gitea in a Podman pod with an nginx reverse proxy (80 -> 3000 or 443 -> 3000) and a postgres backend
 https://gitea.io/en-us/
 
 Requirements
