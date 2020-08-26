@@ -1,0 +1,22 @@
+---
+- name: Create Postgres data directory
+  file:
+    path: '{{ postgres_data_dir }}'
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+
+- name: Create Postgres Container
+  containers.podman.podman_container:
+    name: gitea-postgres
+    image: 'postgres:{{ postgres_version }}'
+    pod: gitea
+    conmon_pidfile: /var/lib/containers/pids/gitea-postgres.pid
+    env:
+      POSTGRES_USER: gitea
+      POSTGRES_PASSWORD: gitea
+      POSTGRES_DB: gitea
+    volume:
+      - /var/lib/containers/gitea-postgres:/var/lib/postgresql/data:Z
+    state: started

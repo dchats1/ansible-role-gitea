@@ -8,3 +8,4 @@
     hostname: '{{ gitea_pod_hostname }}'
 
 - include_tasks: postgres.yml
+- include_tasks: nginx.yml

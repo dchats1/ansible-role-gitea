@@ -13,12 +13,13 @@ Role Variables
 --------------
 
 Variable              | Description
-----------------------|-----------------------------------------------------
-gitea_pod_network:    | Podman network to apply to pod. (Default: 'podman')                                                         
-gitea_pod_ip:         | Set a static IP for the pod's shared network.
-gitea_pod_hostname:   | Hostname for pod. (Default: 'gitea.example.com)
-gitea_version:        | Gitea version. (Default: '1.12.3')
-postgres_version:     | Postgres version. (Default: '9.6')
+----------------------|------------------------------------------------------------------------
+gitea_pod_network     | Podman network to apply to pod. (Default: 'podman')
+gitea_pod_ip          | Set a static IP for the pod's shared network. (Default: '10.88.0.100')
+gitea_pod_hostname    | Hostname for pod. (Default: 'gitea.example.com)
+gitea_version         | Gitea version. (Default: '1.12.3')
+postgres_version      | Postgres version. (Default: '9.6')
+postgres_data_dir     | Data directory for Postgres container. (Default: '/var/lib/containers/gitea-postgres') 
 nginx_version:        | Nginx version. (Default: 1.19.1)
 
 Dependencies
