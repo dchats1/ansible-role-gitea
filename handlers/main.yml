@@ -1,2 +1,10 @@
 ---
-# handlers file for gitea
+- name: daemon-reload
+  systemd:
+    daemon-reload: yes
+
+- name: Restart gitea-postgres
+  systemd:
+    name: container-gitea-postgres.service
+    state: restarted
+

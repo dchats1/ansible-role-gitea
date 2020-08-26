@@ -3,6 +3,10 @@ gitea_pod_network: default
 gitea_pod_ip: 10.88.0.100
 gitea_pod_hostname: gitea.example.com
 gitea_version: 1.12.3
-postgres_version: 9.6
-postgres_data_dir: /var/lib/containers/gitea-postgres
-nginx_version: 1.19.1
+gitea_postgres_version: 9.6
+gitea_postgres_data_dir: /var/lib/containers/gitea-postgres
+gitea_nginx_version: 1.19.1
+gitea_nginx_config_dir: /var/lib/containers/gitea-proxy
+gitea_nginx_ssl: false
+gitea_nginx_cert:
+gitea_nginx_key:

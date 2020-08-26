@@ -1,16 +1,16 @@
 ---
 - name: Create Postgres data directory
   file:
-    path: '{{ postgres_data_dir }}'
-    owner: root
+    path: '{{ gitea_postgres_data_dir }}'
+    owner: '999'
     group: root
-    mode: '0755'
+    mode: '0700'
     state: directory
 
 - name: Create Postgres Container
   containers.podman.podman_container:
     name: gitea-postgres
-    image: 'postgres:{{ postgres_version }}'
+    image: 'postgres:{{ gitea_postgres_version }}'
     pod: gitea
     conmon_pidfile: /var/lib/containers/pids/gitea-postgres.pid
     env:
@@ -20,3 +20,27 @@
     volume:
       - /var/lib/containers/gitea-postgres:/var/lib/postgresql/data:Z
     state: started
+
+- name: Generate systemd unit content
+  shell: podman generate systemd gitea-postgres -n --restart-policy on-failure | tail -n +5
+  changed_when: False
+  register: systemd
+
+- name: Create unit file
+  copy:
+    content: '{{systemd.stdout }}'
+    dest: /etc/systemd/system/container-gitea-postgres.service
+    owner: root
+    group: root
+    mode: '0644'
+  register: unit_file
+  notify:
+    - daemon-reload
+    - Restart gitea-postgres
+
+- name: Start Gitea Postgres container
+  systemd:
+    name: container-gitea-postgres.service
+    state: started
+    enabled: yes
+  when: unit_file.changed == false
