@@ -1,11 +1,10 @@
 ---
-- name: Create Postgres data directory
-  file:
-    path: '{{ gitea_postgres_data_dir }}'
-    owner: '999'
-    group: root
-    mode: '0700'
-    state: directory
+- name: Create Postgres data volume
+  containers.podman.podman_volume:
+    name: gitea-postgres-data
+    state: present
+    label:
+      app: gitea
 
 - name: Create Postgres Container
   containers.podman.podman_container:
@@ -18,7 +17,7 @@
       POSTGRES_PASSWORD: gitea
       POSTGRES_DB: gitea
     volume:
-      - /var/lib/containers/gitea-postgres:/var/lib/postgresql/data:Z
+      - gitea-postgres-data:/var/lib/postgresql/data
     state: started
 
 - name: Generate systemd unit content

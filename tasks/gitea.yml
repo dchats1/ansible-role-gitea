@@ -1,4 +1,11 @@
 ---
+- name: Create Gitea data volume
+  containers.podman.podman_volume:
+    name: gitea-data
+    state: present
+    label:
+      app: gitea
+
 - name: Create Gitea Container
   containers.podman.podman_container:
     name: gitea-web
@@ -17,7 +24,7 @@
       SSH_DOMAIN: gitea.bos2.linuxlab.tech 
       RUN_MODE: prod
     volume:
-      - '{{ gitea_data_dir }}:/data:Z'
+      - gitea-data:/data
       - /etc/localtime:/etc/localtime:ro 
     state: started
 
