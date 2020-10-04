@@ -12,18 +12,19 @@ This requires the containers.podman collection: https://galaxy.ansible.com/conta
 Role Variables
 --------------
 
-Variable              | Description
-----------------------|------------------------------------------------------------------------
-gitea_pod_network       | Podman network to apply to pod. (Default: 'podman')
-gitea_pod_ip            | Set a static IP for the pod's shared network. (Default: '10.88.0.100')
-gitea_pod_hostname      | Hostname for pod. (Default: 'gitea.example.com)
-gitea_version           | Gitea version. (Default: '1.12.4')
-gitea_postgres_version  | Postgres version. (Default: '9.6')
-gitea_nginx_version:    | Nginx version. (Default: 1.19.1)
-gitea_nginx_config_dir  | Nginx configuration files directory. (Default: '/var/lib/containers/gitea-proxy')
-gitea_nginx_ssl         | Use ssl for nginx. (Default: false)
-gitea_nginx_cert        |
-gitea_nginx_key         |
+Variable                 | Description
+-------------------------|------------------------------------------------------------------------
+gitea_pod_network        | Podman network to apply to pod. (Default: 'podman')
+gitea_pod_ip             | Set a static IP for the pod's shared network. (Default: '10.88.0.100')
+gitea_pod_hostname       | Hostname for pod. (Default: 'gitea.example.com)
+gitea_version            | Gitea version. (Default: '1.12.4')
+gitea_postgres_version   | Postgres version. (Default: '9.6')
+gitea_nginx_version:     | Nginx version. (Default: 1.19.1)
+gitea_nginx_config_dir   | Nginx configuration files directory. (Default: '/var/lib/containers/gitea-proxy')
+gitea_nginx_ssl          | Use ssl for nginx. (Default: false)
+gitea_nginx_cert         |
+gitea_nginx_key          |
+gitea_monitoring_metrics | Enable Prometheus metrics. (Default: false)
 
 Dependencies
 ------------

@@ -9,3 +9,4 @@ gitea_nginx_config_dir: /var/lib/containers/gitea-proxy
 gitea_nginx_ssl: false
 gitea_nginx_cert:
 gitea_nginx_key:
+gitea_monitoring_metrics: false

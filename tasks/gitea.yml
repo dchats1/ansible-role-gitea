@@ -28,6 +28,34 @@
       - /etc/localtime:/etc/localtime:ro 
     state: started
 
+- name: Get data directory
+  containers.podman.podman_volume_info:
+    name: gitea-data
+  register: data_dir
+
+- set_fact:
+    gitea_conf_file: '{{ data_dir.volumes[0].Mountpoint }}/gitea/conf/app.ini'
+
+- name: Enable Prometheus metrics
+  blockinfile:
+    path: '{{ gitea_conf_file }}'
+    marker:  ";{mark} ANSIBLE MANAGED BLOCK"
+    block: |
+      [metrics]
+      ENABLED = true
+  notify: Restart gitea-web
+  when: gitea_monitoring_metrics
+
+- name: Disable Prometheus metrics
+  blockinfile:
+    path: '{{ gitea_conf_file }}'
+    marker:  ";{mark} ANSIBLE MANAGED BLOCK"
+    block: |
+      [metrics]
+      ENABLED = false
+  notify: Restart gitea-web
+  when: not gitea_monitoring_metrics
+
 - name: Generate systemd unit content
   shell: podman generate systemd gitea-web -n --restart-policy on-failure | tail -n +5
   changed_when: False
