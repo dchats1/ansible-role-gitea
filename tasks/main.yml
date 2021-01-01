@@ -10,3 +10,24 @@
 - include_tasks: postgres.yml
 - include_tasks: nginx.yml
 - include_tasks: gitea.yml
+
+- name: Get Infra Container
+  containers.podman.podman_pod_info:
+    name: gitea
+  register: pod_info
+
+- set_fact:
+    gitea_infra_id: '{{ pod_info.pods[0].InfraContainerID  }}'
+
+- name: Get Infra Container info
+  containers.podman.podman_container_info:
+    name: '{{ gitea_infra_id }}'
+  register: container_info
+
+- set_fact:
+    gitea_pod_ip: '{{ container_info | json_query(query) }}'
+  vars:
+    query: 'containers[0].NetworkSettings.Networks.{{ gitea_pod_network }}.IPAddress'
+
+- debug:
+    msg: 'Gitea pod IP: {{ gitea_pod_ip }}'

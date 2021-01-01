@@ -13,8 +13,8 @@
     pod: gitea
     conmon_pidfile: /var/lib/containers/pids/gitea-web.pid
     env:
-      USER_UID: 1000
-      USER_GID: 1000
+      USER_UID: '1000'
+      USER_GID: '1000'
       DB_TYPE: postgres
       DB_HOST: gitea-postgres:5432
       DB_NAME: gitea
