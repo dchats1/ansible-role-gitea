@@ -24,7 +24,7 @@
     volume:
       - /var/lib/containers/gitea-proxy/proxy_config.conf:/etc/nginx/conf.d/default.conf:Z
     state: started
-  when: gitea_nginx_ssl == false
+  when: not gitea_nginx_ssl
 
 - name: Create SSL Gitea proxy
   containers.podman.podman_container:
@@ -37,16 +37,16 @@
       - '/etc/pki/tls/private/{{ gitea_nginx_key }}:/etc/nginx/{{ gitea_nginx_key }}:Z'
       - '/etc/pki/tls/certs/{{ gitea_nginx_cert }}:/etc/nginx/{{ gitea_nginx_cert }}:Z'
     state: started
-  when: gitea_nginx_ssl == true
+  when: gitea_nginx_ssl
 
 - name: Generate systemd unit content
-  shell: podman generate systemd gitea-proxy -n --restart-policy on-failure | tail -n +5
+  shell: set -o pipefail && podman generate systemd gitea-proxy -n --restart-policy on-failure | tail -n +5
   changed_when: False
   register: systemd
 
 - name: Create unit file
   copy:
-    content: '{{systemd.stdout }}'
+    content: '{{ systemd.stdout }}'
     dest: /etc/systemd/system/container-gitea-proxy.service
     owner: root
     group: root
@@ -61,4 +61,4 @@
     name: container-gitea-proxy.service
     state: started
     enabled: yes
-  when: unit_file.changed == false
+  when: not unit_file.changed

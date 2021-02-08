@@ -21,11 +21,11 @@
       DB_USER: gitea
       DB_PASSWD: gitea
       DOMAIN: gitea.bos2.linuxlab.tech
-      SSH_DOMAIN: gitea.bos2.linuxlab.tech 
+      SSH_DOMAIN: gitea.bos2.linuxlab.tech
       RUN_MODE: prod
     volume:
       - gitea-data:/data
-      - /etc/localtime:/etc/localtime:ro 
+      - /etc/localtime:/etc/localtime:ro
     state: started
 
 - name: Get data directory
@@ -57,13 +57,13 @@
   when: not gitea_monitoring_metrics
 
 - name: Generate systemd unit content
-  shell: podman generate systemd gitea-web -n --restart-policy on-failure | tail -n +5
+  shell: set -o pipefail && podman generate systemd gitea-web -n --restart-policy on-failure | tail -n +5
   changed_when: False
   register: systemd
 
 - name: Create unit file
   copy:
-    content: '{{systemd.stdout }}'
+    content: '{{ systemd.stdout }}'
     dest: /etc/systemd/system/container-gitea-web.service
     owner: root
     group: root
@@ -78,4 +78,4 @@
     name: container-gitea-web.service
     state: started
     enabled: yes
-  when: unit_file.changed == false
+  when: not unit_file.changed
